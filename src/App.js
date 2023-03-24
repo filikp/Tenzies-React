@@ -17,6 +17,8 @@ export default function App() {
     }
   }
 
+  const [numberOfRolls, setNumberOfRolls] = React.useState(0)
+
   function allNewDice() {
     const newDice = [];
     for (let i = 0; i < 10; i++) {
@@ -27,6 +29,7 @@ export default function App() {
 
   function rollDice() {
     if (!tenzies) {
+      setNumberOfRolls(prevNumberOfRolls => prevNumberOfRolls + 1)
       setDice(prevDice => prevDice.map(die => {
         return die.isHeld ?
           die :
@@ -52,7 +55,9 @@ export default function App() {
     const allSameValue = dice.every(die => die.value === firstValue)
     if (allHeld && allSameValue) {
       setTenzies(true)
-      console.log("You won")
+      const newDiv = document.createElement('div')
+      newDiv.innerHTML = `You won in ${numberOfRolls} rolls!`
+      document.getElementById('youWon').appendChild(newDiv)
     }
 
   }, [dice])
@@ -75,6 +80,7 @@ export default function App() {
         {diceElements}
       </div>
       <button className='roll-dice' onClick={rollDice}>{tenzies ? "New game" : "Roll"}</button>
+      <div id="youWon"></div>
     </main>
   )
 }
