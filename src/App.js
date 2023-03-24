@@ -17,7 +17,10 @@ export default function App() {
     }
   }
 
-  const [numberOfRolls, setNumberOfRolls] = React.useState(0)
+  const [numberOfRolls, setNumberOfRolls] = React.useState({
+    rolls: (0),
+    startTime: new Date()
+  })
 
   function allNewDice() {
     const newDice = [];
@@ -29,7 +32,12 @@ export default function App() {
 
   function rollDice() {
     if (!tenzies) {
-      setNumberOfRolls(prevNumberOfRolls => prevNumberOfRolls + 1)
+      setNumberOfRolls(prevNumberOfRolls => {
+        return {
+          ...prevNumberOfRolls,
+          rolls: prevNumberOfRolls.rolls + 1
+        }
+      })
       setDice(prevDice => prevDice.map(die => {
         return die.isHeld ?
           die :
@@ -38,11 +46,12 @@ export default function App() {
     } else {
       setTenzies(false)
       setDice(allNewDice())
+      document.getElementById('youWon').innerHTML = ''
     }
   }
 
   function holdDice(id) {
-    setDice(prevDice => prevDice.map(die => {
+    !tenzies && setDice(prevDice => prevDice.map(die => {
       return die.id === id ?
         { ...die, isHeld: !die.isHeld } :
         die
@@ -55,8 +64,11 @@ export default function App() {
     const allSameValue = dice.every(die => die.value === firstValue)
     if (allHeld && allSameValue) {
       setTenzies(true)
+      const endTime = new Date()
+      const totalTime = Math.round((endTime - numberOfRolls.startTime) / 1000 * 100) / 100
       const newDiv = document.createElement('div')
-      newDiv.innerHTML = `You won in ${numberOfRolls} rolls!`
+      console.log(numberOfRolls.rolls)
+      newDiv.innerHTML = `You won in ${numberOfRolls.rolls} rolls!\nYour elapsed time is ${totalTime}s`
       document.getElementById('youWon').appendChild(newDiv)
     }
 
@@ -68,6 +80,7 @@ export default function App() {
       value={die.value}
       isHeld={die.isHeld}
       holdDice={() => holdDice(die.id)}
+      tenzies={tenzies}
     />
   ))
 
