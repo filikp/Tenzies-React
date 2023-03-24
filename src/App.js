@@ -1,49 +1,49 @@
 import React from 'react'
-import Mine from './components/Mine'
+import Die from './components/Die'
 
 export default function App() {
 
-  const [mines, setMines] = React.useState(allNewMines())
+  const [dice, setDice] = React.useState(allNewDice())
 
-  function allNewMines() {
-    const newMine = [];
-    for (let i = 0; i < 25; i++) {
-      newMine.push({
-        value: Math.floor(Math.random() * 2),
+  function allNewDice() {
+    const newDice = [];
+    for (let i = 0; i < 10; i++) {
+      newDice.push({
+        value: Math.ceil(Math.random() * 6),
         id: i,
-        isPushed: false
+        isHeld: false
       })
     }
-    return newMine;
+    return newDice;
   }
 
-  const mineElements = mines.map(mine => (
-    <Mine
-      key={mine.id}
-      value={mine.value}
-      isPushed={mine.isPushed}
-      pressMine={() => pressMine(mine.id)}
-    />
-  ))
-
-  function newGame() {
-    setMines(allNewMines())
+  function rollDice() {
+    setDice(allNewDice())
   }
 
-  function pressMine(id) {
-    setMines(prevMines => prevMines.map(mine => {
-      return mine.id === id && mine.isPushed == false ?
-        { ...mine, isPushed: !mine.isPushed } :
-        mine
+  function holdDice(id) {
+    setDice(prevDice => prevDice.map(die => {
+      return die.id === id ?
+        { ...die, isHeld: !die.isHeld } :
+        die
     }))
   }
 
+  const diceElements = dice.map(die => (
+    <Die
+      key={die.id}
+      value={die.value}
+      isHeld={die.isHeld}
+      holdDice={() => holdDice(die.id)}
+    />
+  ))
+
   return (
     <main>
-      <div className='mine-container'>
-        {mineElements}
+      <div className='dice-container'>
+        {diceElements}
       </div>
-      <button className='new-game' onClick={newGame}>New Game</button>
+      <button className='roll-dice' onClick={rollDice}>Roll</button>
     </main>
   )
 }
