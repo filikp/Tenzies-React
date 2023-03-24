@@ -8,15 +8,34 @@ export default function App() {
   function allNewMines() {
     const newMine = [];
     for (let i = 0; i < 25; i++) {
-      newMine.push(Math.floor(Math.random() * 2))
+      newMine.push({
+        value: Math.floor(Math.random() * 2),
+        id: i,
+        isPushed: false
+      })
     }
     return newMine;
   }
 
-  const mineElements = mines.map(mine => <Mine value={mine} />)
+  const mineElements = mines.map(mine => (
+    <Mine
+      key={mine.id}
+      value={mine.value}
+      isPushed={mine.isPushed}
+      pressMine={() => pressMine(mine.id)}
+    />
+  ))
 
   function newGame() {
     setMines(allNewMines())
+  }
+
+  function pressMine(id) {
+    setMines(prevMines => prevMines.map(mine => {
+      return mine.id === id && mine.isPushed == false ?
+        { ...mine, isPushed: !mine.isPushed } :
+        mine
+    }))
   }
 
   return (
